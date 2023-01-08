@@ -33,10 +33,11 @@ def process(request):
         if formset.is_valid():
             for form in formset:
                 cleanform = form.cleaned_data['answer']
+                # FIXME funkcionalitu s examinations este treba dorobit a domysliet.
                 bup = Response(questionnaire_id=cleanform.question.questionnaire_id,
                                patient_id=1,
                                question_id=cleanform.question.id,
-                               answer_id=cleanform.id,
+                               choice_id=cleanform.id,
                                examination_id=1,
                                )
                 bup.save()
