@@ -56,6 +56,8 @@ class Response(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="patient_responses")
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE, related_name="choice_responses")
     examination = models.ForeignKey(Examination, on_delete=models.CASCADE, related_name="exam_responses")
+    # set nam identifikuje vsetky response objekty vytvorene z jedneho formsetu
+    set = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
