@@ -1,7 +1,9 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
 from .models import Question, Questionnaire, Response
 from django.forms import formset_factory
 from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper
+from django.urls import reverse
 
 
 # Create your views here.
@@ -22,45 +24,38 @@ def process(request):
     if request.method == 'POST':
         form = PatientForm(request.POST)
         if form.is_valid():
-            pass
+            patient_id = form.cleaned_data['id']
         else:
             print(form.errors)
+            return HttpResponseRedirect(reverse("index"))
         qre_id = request.POST['qre_id']
         qs = Question.objects.filter(questionnaire=qre_id).values_list('id', flat=True)
         qaformset = formset_factory(ChoiceForm, formset=BaseChoiceFormSet, extra=len(qs))
         formset = qaformset(request.POST, form_kwargs={'questions': qs})
 
         if formset.is_valid():
-            if Response.objects.exists():
-                last_set = Response.objects.latest('created_at').set + 1
+            if form.is_valid():
+                pass
             else:
-                last_set = 0
+                print(form.errors)
 
             for form in formset:
                 cleanform = form.cleaned_data['answer']
                 # FIXME funkcionalitu s examinations este treba dorobit a domysliet.
+                print(patient_id)
+                # TODO ak nam uzivatel zada zle cislo pacienta, tak nam save zhavaruje - ako tomu predist?
+                # mozno https://docs.djangoproject.com/en/4.1/ref/forms/validation/
                 bup = Response(questionnaire_id=cleanform.question.questionnaire_id,
                                # FIXME patient_id nesmie byt natvrdo!
-                               patient_id=1,
+                               patient_id=patient_id,
                                question_id=cleanform.question.id,
                                choice_id=cleanform.id,
-                               set=last_set,
                                examination_id=1,
-
                                )
-                # bup.save()
-            last_set_content = Response.objects.filter(set=last_set-1)
-            #
-            #
-            # TU PREBEHNE KALKULACIA, KTORA BY MALA PREBEHNUT INDE
-            #
-            #
-            set_sum = 0
-            for i in last_set_content:
-                set_sum += i.choice.points
-            print(last_set_content)
-            # tu si musime pripravit data, ktore ideme vlastne zobrazovat...
-            return render(request, 'Questionnaires/show_result.html', {'patient': 1, 'set_sum': set_sum})
+                #print(bup)
+                bup.save()
+
+            return HttpResponse("Great!")
 
         else:
             print(formset.errors)
@@ -72,3 +67,6 @@ def process(request):
 def reporty(request):
     return HttpResponse("Working on it!")
 
+
+def index(request):
+    return render(request, 'Questionnaires/index.html', {})
