@@ -3,7 +3,6 @@
 {% load crispy_forms_tags %}
 
 {% block body %}
-
     <form action="{% url 'process' %}" method="post">
         {% csrf_token %}
         {{ formset.management_form }}

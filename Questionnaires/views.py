@@ -1,9 +1,10 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
-from .models import Question, Questionnaire, Response
+from .models import Question, Questionnaire, Response, Patient, Examination
 from django.forms import formset_factory
-from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper
+from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper, ReportForm
 from django.urls import reverse
+from django.contrib import messages
 
 
 # Create your views here.
@@ -25,6 +26,11 @@ def process(request):
         form = PatientForm(request.POST)
         if form.is_valid():
             patient_id = form.cleaned_data['id']
+            if not Patient.objects.filter(id=patient_id):
+                # vytvor django message, ze cislo pacienta je zle!
+                messages.add_message(request, messages.ERROR, "Zlé číslo pacienta!")
+                # vratime sa na predchadzajucu stranku
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         else:
             print(form.errors)
             return HttpResponseRedirect(reverse("index"))
@@ -34,25 +40,19 @@ def process(request):
         formset = qaformset(request.POST, form_kwargs={'questions': qs})
 
         if formset.is_valid():
-            if form.is_valid():
-                pass
-            else:
-                print(form.errors)
+            exam = Examination(patient_id=patient_id)
+            exam.save()
 
             for form in formset:
                 cleanform = form.cleaned_data['answer']
                 # FIXME funkcionalitu s examinations este treba dorobit a domysliet.
-                print(patient_id)
-                # TODO ak nam uzivatel zada zle cislo pacienta, tak nam save zhavaruje - ako tomu predist?
-                # mozno https://docs.djangoproject.com/en/4.1/ref/forms/validation/
                 bup = Response(questionnaire_id=cleanform.question.questionnaire_id,
-                               # FIXME patient_id nesmie byt natvrdo!
                                patient_id=patient_id,
                                question_id=cleanform.question.id,
                                choice_id=cleanform.id,
-                               examination_id=1,
+                               examination=exam,
                                )
-                #print(bup)
+                # print(bup)
                 bup.save()
 
             return HttpResponse("Great!")
@@ -64,8 +64,16 @@ def process(request):
         return HttpResponse("POOP")
 
 
-def reporty(request):
-    return HttpResponse("Working on it!")
+def get_report(request):
+    if request.method == 'POST':
+        form = ReportForm(request)
+        if form.is_valid():
+            print(form.cleaned_data)
+    else:
+        form = ReportForm()
+    return render(request, 'Questionnaires/get_report.html', {
+        'form': form
+    })
 
 
 def index(request):

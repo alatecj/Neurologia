@@ -44,3 +44,8 @@ class ChoiceFormSetHelper(FormHelper):
         # self.form_class = "form-horizontal"
         # self.label_class = "col-lg-2"
         # self.field_class = "col-lg-8"
+
+
+class ReportForm(forms.Form):
+    # sem pridame rozne ine veci, napr. id dotaznika, atd.
+    patient_id = forms.IntegerField(required=True, label="ID pacienta")

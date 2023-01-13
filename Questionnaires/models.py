@@ -60,4 +60,3 @@ class Response(models.Model):
     examination = models.ForeignKey(Examination, on_delete=models.CASCADE, related_name="exam_responses")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
