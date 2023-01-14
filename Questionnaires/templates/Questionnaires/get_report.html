@@ -1,15 +1,6 @@
 {% extends "Questionnaires/layout.html" %}
-{% load crispy_forms_filters %}
 {% load crispy_forms_tags %}
 
 {% block body %}
-    <form action="{% url 'get_report' %}" method="post">
-        {% csrf_token %}
-        {{ form }}
-{#        TODO ku kazdej forme musi byt helper, ak ideme s crispy, toto treba opravit #}
-        <div class="form-actions">
-            <input type="submit" name="submit" value="Vyhľadať" class="btn btn-primary" id="submit-save">
-        </div>
-    </form>
-
+        {% crispy form %}
 {% endblock %}

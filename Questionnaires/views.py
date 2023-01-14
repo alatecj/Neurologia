@@ -66,9 +66,11 @@ def process(request):
 
 def get_report(request):
     if request.method == 'POST':
-        form = ReportForm(request)
+        form = ReportForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)
+            responses = Response.objects.filter(patient=form.cleaned_data['patient_id'])
+            return render(request, 'Questionnaires/show_report.html', {'responses': responses})
     else:
         form = ReportForm()
     return render(request, 'Questionnaires/get_report.html', {

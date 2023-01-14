@@ -51,6 +51,9 @@ class Examination(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"Vyšetrenie {self.id}"
+
 
 class Response(models.Model):
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="qre_responses")

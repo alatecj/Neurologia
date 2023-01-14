@@ -1,0 +1,16 @@
+{% extends "Questionnaires/layout.html" %}
+
+
+{% block body %}
+    {% for response in responses %}
+        {{ response.created_at }}
+        {{ response.patient }}
+        {{ response.question }}
+        {{ response.choice }}
+        {{ response.choice.points }}
+        {{ response.examination }} <br />
+
+{#        TODO k tomuto pristupime uplne inak - zaklad bude exam objekt, z ktoreho budeme cez related names vytahovat ostatne info.#}
+
+    {% endfor %}
+{% endblock %}
