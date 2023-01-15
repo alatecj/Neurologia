@@ -19,7 +19,7 @@ class Question(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.text
+        return f'{self.questionnaire} {self.sequence} {self.text}'
 
 
 class Choice(models.Model):
@@ -63,3 +63,6 @@ class Response(models.Model):
     examination = models.ForeignKey(Examination, on_delete=models.CASCADE, related_name="exam_responses")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.choice.text
