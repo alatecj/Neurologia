@@ -1,20 +1,23 @@
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Submit, Layout, Fieldset, HTML
 from django import forms
 from django.forms import BaseFormSet
 from .models import Choice, Question
 
 
 class ChoiceForm(forms.Form):
-    answer = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Choice.objects.none())
+    answer = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Choice.objects.none(),)
 
-    def __init__(self, *args, question_id=None, **kwargs):
+    def __init__(self, *args, question_id=None, **kwargs, ):
+
         super().__init__(*args, **kwargs)
         if question_id is not None:
             self.fields['answer'].queryset = Choice.objects.filter(question=question_id)
             q = Question.objects.get(pk=question_id)
             self.fields['answer'].label = q.text
             self.fields['answer'].required = True
+            self.section_text = q.section_text
+
 
 
 class BaseChoiceFormSet(BaseFormSet):

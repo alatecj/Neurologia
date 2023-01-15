@@ -14,6 +14,7 @@ def display_questionnaire(request, questionnaire_id):
     patientform = PatientForm()
     qre_id = Questionnaire.objects.get(pk=questionnaire_id)
     qs = Question.objects.filter(questionnaire=qre_id).values_list('id', flat=True)
+    print(qs)
     qaformset = formset_factory(ChoiceForm, formset=BaseChoiceFormSet, extra=len(qs))
     formset = qaformset(form_kwargs={'questions': qs})
     helper = ChoiceFormSetHelper()

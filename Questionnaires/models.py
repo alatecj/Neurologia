@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 
@@ -15,6 +16,9 @@ class Question(models.Model):
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questions")
     sequence = models.PositiveSmallIntegerField()
     text = models.CharField(max_length=200)
+    # section_text sluzi na pridanie textu pred niektorou z otazok - napriklad nejaky text vysvetlujuci co bude v dalsej
+    # sekcii
+    section_text = models.CharField(max_length=200, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -23,6 +27,9 @@ class Question(models.Model):
 
 
 class Choice(models.Model):
+    class Meta:
+        ordering = ('question', 'id')
+
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="choices")
     sequence = models.PositiveSmallIntegerField()
     text = models.CharField(max_length=200)
