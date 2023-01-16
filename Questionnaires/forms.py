@@ -19,7 +19,6 @@ class ChoiceForm(forms.Form):
             self.section_text = q.section_text
 
 
-
 class BaseChoiceFormSet(BaseFormSet):
     def __init__(self, *args, **kwargs):
         super(BaseChoiceFormSet, self).__init__(*args, **kwargs)

@@ -7,7 +7,10 @@
         {% csrf_token %}
         {{ formset.management_form|crispy}}
         {{ patientform|crispy }}
-        {% for form in formset %}
+{#        {% crispy formset helper %}#}
+{#    TODO toto nam funguje s crispy formset helperom, ale nefunguje s jednotlivymi formami - to je pruser ako brno#}
+{#    riesenim je bud upravit helper tak, aby bol pre form, alebo vymysliet, ako dostat do formsetu nase additional pole#}
+        {% for form in formset%}
             {% if form.section_text %}
                 <h1>{{ form.section_text }}</h1>
             {% endif %}
