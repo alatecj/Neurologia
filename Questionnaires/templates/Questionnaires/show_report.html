@@ -2,11 +2,6 @@
 
 
 {% block body %}
-    {% for ex in exam %}
-        {% for resp in ex.exam_responses.all %}
-            {{ resp.choice }}{{ resp.choice.points }}<br>
-        {% endfor %}
-    {% endfor %}
 
 
 

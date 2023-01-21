@@ -1,15 +1,14 @@
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Fieldset, HTML
+from crispy_forms.layout import Submit, Layout, HTML
 from django import forms
 from django.forms import BaseFormSet
-from .models import Choice, Question
+from .models import Choice, Question, Patient
 
 
 class ChoiceForm(forms.Form):
-    answer = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Choice.objects.none(),)
+    answer = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Choice.objects.none(), )
 
     def __init__(self, *args, question_id=None, **kwargs, ):
-
         super().__init__(*args, **kwargs)
         if question_id is not None:
             self.fields['answer'].queryset = Choice.objects.filter(question=question_id)
@@ -41,6 +40,8 @@ class ChoiceFormSetHelper(FormHelper):
         self.form_method = 'post'
         self.render_required_fields = True
         self.form_tag = False
+        # self.layout = Layout((HTML('{% if form.section_text %}šuba duba{% endif %}')))
+        self.layout = Layout((HTML('{% if forloop.first %} Only display text on the first iteration... {% endif %}')))
         # Tu by sme teoreticky vedeli urobit moznosti formulara vodorovne.
         # self.layout = Layout(
         #     InlineRadios('answer'))
@@ -51,10 +52,11 @@ class ChoiceFormSetHelper(FormHelper):
 
 class ReportForm(forms.Form):
     # sem pridame rozne ine veci, napr. id dotaznika, atd.
-    patient_id = forms.IntegerField(required=True, label="ID pacienta")
+    patient = forms.ModelChoiceField(queryset=None, label="Pacient")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['patient'].queryset = Patient.objects.all()
         self.helper = FormHelper()
         self.helper.form_id = 'reportform'
         # self.helper.form_class = 'blueForms'

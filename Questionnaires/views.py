@@ -70,9 +70,10 @@ def get_report(request):
         form = ReportForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)
-            exam = Examination.objects.filter(patient=form.cleaned_data['patient_id'])
+            exam = Examination.objects.filter(patient=form.cleaned_data['patient'])
 
-            return render(request, 'Questionnaires/show_report.html', {'exam': exam})
+            return render(request, 'Questionnaires/get_report.html', {'form': form,
+                                                                      'exam': exam})
     else:
         form = ReportForm()
     return render(request, 'Questionnaires/get_report.html', {
@@ -82,3 +83,7 @@ def get_report(request):
 
 def index(request):
     return render(request, 'Questionnaires/index.html', {})
+
+
+def show_report(request, exam_id):
+    return HttpResponse(exam_id)

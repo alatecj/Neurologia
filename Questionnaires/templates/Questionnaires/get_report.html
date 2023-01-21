@@ -2,5 +2,14 @@
 {% load crispy_forms_tags %}
 
 {% block body %}
-        {% crispy form %}
+    {% crispy form %}
+
+    {% for ex in exam %}
+        {% for resp in ex.exam_responses.all %}
+            {% if forloop.first %}
+                <a href="{% url 'show_report' ex.id %}">Vyšetrenie zo dňa {{ ex.created_at.date }} -
+                    dotazník {{ resp.questionnaire }}</a><br>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
 {% endblock %}
