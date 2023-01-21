@@ -2,7 +2,26 @@
 
 
 {% block body %}
-
+    <strong>Vyšetrenie:</strong> {{ exam }}<br/>
+    <strong>Zo dňa:</strong> {{ exam.created_at.date }}<br/>
+    <strong>Pacient:</strong> {{ exam.patient }}<br/>
+    <strong>Dotazník:</strong> {{ exam.exam_responses.first.questionnaire }}<br/>
+    <table class="table table-hover table-sm">
+        <thead>
+        <tr>
+            <th scope="col">Otázka</th>
+            <th scope="col">Odpoveď</th>
+            <th scope="col">Počet bodov</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for resp in exam.exam_responses.all %}
+            <tr>
+            <td>{{ resp.question }}</td><td>{{ resp.choice.text }}</td><td>{{ resp.choice.points }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
 
 {% endblock %}

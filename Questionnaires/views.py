@@ -46,7 +46,6 @@ def process(request):
 
             for form in formset:
                 cleanform = form.cleaned_data['answer']
-                # FIXME funkcionalitu s examinations este treba dorobit a domysliet.
                 bup = Response(questionnaire_id=cleanform.question.questionnaire_id,
                                patient_id=patient_id,
                                question_id=cleanform.question.id,
@@ -71,7 +70,6 @@ def get_report(request):
         if form.is_valid():
             print(form.cleaned_data)
             exam = Examination.objects.filter(patient=form.cleaned_data['patient'])
-
             return render(request, 'Questionnaires/get_report.html', {'form': form,
                                                                       'exam': exam})
     else:
@@ -86,4 +84,6 @@ def index(request):
 
 
 def show_report(request, exam_id):
-    return HttpResponse(exam_id)
+    exam = Examination.objects.get(pk=exam_id)
+
+    return render(request, 'Questionnaires/show_report.html', {'exam': exam})
