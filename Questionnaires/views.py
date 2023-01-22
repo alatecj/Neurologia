@@ -5,6 +5,7 @@ from django.forms import formset_factory
 from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper, ReportForm
 from django.urls import reverse
 from django.contrib import messages
+from .calculations import *
 
 
 # Create your views here.
@@ -85,5 +86,6 @@ def index(request):
 
 def show_report(request, exam_id):
     exam = Examination.objects.get(pk=exam_id)
-
-    return render(request, 'Questionnaires/show_report.html', {'exam': exam})
+    # result = calc_faq(exam)
+    result = calc_hads(exam)
+    return render(request, 'Questionnaires/show_report.html', {'exam': exam, 'result': result})
