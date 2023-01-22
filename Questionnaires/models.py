@@ -15,6 +15,10 @@ class Questionnaire(models.Model):
 class Question(models.Model):
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questions")
     sequence = models.PositiveSmallIntegerField()
+    # eval_sequence sluzi na odkazovanie sa na otazky v pripadoch, ak su vyhodnocovane v inom poradi, ako zobrazovane
+    # napr. pri liveerpool seizure scale - kde otazky zobrazujeme v poradi 1,2,3,4,6,7,13,14..., ale vyhodnocujeme v
+    # poradi 1-9, 10-20
+    eval_sequence = models.PositiveSmallIntegerField(null=True, blank=True)
     text = models.CharField(max_length=200)
     # section_text sluzi na pridanie textu pred niektorou z otazok - napriklad nejaky text vysvetlujuci co bude v dalsej
     # sekcii

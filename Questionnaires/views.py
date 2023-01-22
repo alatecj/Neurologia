@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
-from .models import Question, Questionnaire, Response, Patient, Examination
+from .models import Question, Questionnaire, Response, Patient
 from django.forms import formset_factory
 from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper, ReportForm
 from django.urls import reverse
@@ -86,6 +86,17 @@ def index(request):
 
 def show_report(request, exam_id):
     exam = Examination.objects.get(pk=exam_id)
+    qre_id = exam.exam_responses.all().first().questionnaire_id
+    # TODO tie hardcoded values pre id questionnairov by mohli byt nejake dynamickejsie... (vyhodnocovanie cez json?)
+    match qre_id:
+        case 1:
+            result = calc_faq(exam)
+        case 2:
+            result = calc_hads(exam)
+        case 3:
+            result = calc_faq(exam)
+        case _:
+            result = calc_faq(exam)
     # result = calc_faq(exam)
-    result = calc_hads(exam)
+    # result = calc_hads(exam)
     return render(request, 'Questionnaires/show_report.html', {'exam': exam, 'result': result})
