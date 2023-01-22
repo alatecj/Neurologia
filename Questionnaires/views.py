@@ -95,6 +95,8 @@ def show_report(request, exam_id):
             result = calc_hads(exam)
         case 3:
             result = calc_faq(exam)
+        case 4:
+            result = calc_liverpool(exam)
         case _:
             result = calc_faq(exam)
     # result = calc_faq(exam)

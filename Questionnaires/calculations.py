@@ -34,5 +34,15 @@ def calc_hads(exa):
 
 
 def calc_liverpool(exa):
-    # musime pozriet eval_sequence z Question, ulozit aj s bodmi do dictionary, zoradit ho
-    pass
+    response_list = []
+    responses = exa.exam_responses.all()
+    for response in responses:
+        tup = (response.question.eval_sequence, response.choice.points)
+        response_list.append(tup)
+    response_list = sorted(response_list)
+    zavaznost, postiktalny = 0, 0
+    for x in range(9):
+        zavaznost += response_list.pop(0)[1]
+    postiktalny = sum(i[1] for i in response_list)
+    result = f"Závažnosť: {zavaznost} bodov, postiktálny stav: {postiktalny} bodov."
+    return result
