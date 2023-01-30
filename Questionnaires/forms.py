@@ -1,3 +1,4 @@
+from crispy_forms.bootstrap import InlineRadios
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, HTML, Fieldset
 from django import forms
@@ -16,6 +17,11 @@ class ChoiceForm(forms.Form):
             self.fields['answer'].label = q.text
             self.fields['answer'].required = True
             self.section_text = q.section_text
+
+            self.helper = FormHelper(self)
+            self.helper.form_tag = False
+            self.helper.disable_csrf = True
+            # self.helper.layout = Layout(InlineRadios('answer'))
 
 
 class BaseChoiceFormSet(BaseFormSet):
@@ -43,8 +49,7 @@ class ChoiceFormSetHelper(FormHelper):
         # self.layout = Layout(HTML('<strong>{{ form.section_text }}</strong>'),)
         # self.layout = Layout((HTML('{% if forloop.first %} Only display text on the first iteration... {% endif %}')))
         # Tu by sme teoreticky vedeli urobit moznosti formulara vodorovne.
-        # self.layout = Layout(
-        #     InlineRadios('answer'))
+        self.layout = Layout(InlineRadios('answer'))
         # self.form_class = "form-horizontal"
         # self.label_class = "col-lg-2"
         # self.field_class = "col-lg-8"

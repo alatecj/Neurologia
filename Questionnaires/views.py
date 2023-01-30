@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
-from .models import Question, Questionnaire, Response, Patient
+from .models import Question, Questionnaire, Response, Patient, Examination
 from django.forms import formset_factory
 from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper, ReportForm
 from django.urls import reverse
@@ -15,7 +15,6 @@ def display_questionnaire(request, questionnaire_id):
     patientform = PatientForm()
     qre_id = Questionnaire.objects.get(pk=questionnaire_id)
     qs = Question.objects.filter(questionnaire=qre_id).values_list('id', flat=True)
-    print(qs)
     qaformset = formset_factory(ChoiceForm, formset=BaseChoiceFormSet, extra=len(qs))
     formset = qaformset(form_kwargs={'questions': qs})
     helper = ChoiceFormSetHelper()
@@ -53,7 +52,6 @@ def process(request):
                                choice_id=cleanform.id,
                                examination=exam,
                                )
-                # print(bup)
                 bup.save()
 
             return HttpResponse("Great!")
@@ -69,7 +67,6 @@ def get_report(request):
     if request.method == 'POST':
         form = ReportForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
             exam = Examination.objects.filter(patient=form.cleaned_data['patient'])
             return render(request, 'Questionnaires/get_report.html', {'form': form,
                                                                       'exam': exam})
@@ -97,6 +94,8 @@ def show_report(request, exam_id):
             result = calc_faq(exam)
         case 4:
             result = calc_liverpool(exam)
+        case 5:
+            result = calc_sf36(exam)
         case _:
             result = calc_faq(exam)
     # result = calc_faq(exam)
