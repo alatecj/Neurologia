@@ -40,6 +40,18 @@ class PatientForm(forms.Form):
     id = forms.IntegerField(required=True, label="ID pacienta")
 
 
+class AddPatientForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        print("šubidubi")
+
+    class Meta:
+        model = Patient
+        fields = ['name', 'identifier']
+
+
 class ChoiceFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

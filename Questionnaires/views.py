@@ -2,17 +2,18 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
 from .models import Question, Questionnaire, Response, Patient, Examination
 from django.forms import formset_factory
-from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper, ReportForm
+from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper, ReportForm, AddPatientForm
 from django.urls import reverse
 from django.contrib import messages
 from .calculations import *
+from django.contrib.auth import logout, authenticate, login
 
 
 # Create your views here.
 
 
 def display_questionnaire(request, questionnaire_id):
-    patientform = PatientForm()
+    patientform = ReportForm()
     qre_id = Questionnaire.objects.get(pk=questionnaire_id)
     qs = Question.objects.filter(questionnaire=qre_id).values_list('id', flat=True)
     qaformset = formset_factory(ChoiceForm, formset=BaseChoiceFormSet, extra=len(qs))
@@ -24,10 +25,10 @@ def display_questionnaire(request, questionnaire_id):
 
 def process(request):
     if request.method == 'POST':
-        form = PatientForm(request.POST)
+        form = ReportForm(request.POST)
         if form.is_valid():
-            patient_id = form.cleaned_data['id']
-            if not Patient.objects.filter(id=patient_id):
+            patient = form.cleaned_data['patient']
+            if not Patient.objects.filter(id=patient.id):
                 # vytvor django message, ze cislo pacienta je zle!
                 messages.add_message(request, messages.ERROR, "Zlé číslo pacienta!")
                 # vratime sa na predchadzajucu stranku
@@ -41,20 +42,20 @@ def process(request):
         formset = qaformset(request.POST, form_kwargs={'questions': qs})
 
         if formset.is_valid():
-            exam = Examination(patient_id=patient_id)
+            exam = Examination(patient_id=patient.id)
             exam.save()
 
             for form in formset:
                 cleanform = form.cleaned_data['answer']
                 bup = Response(questionnaire_id=cleanform.question.questionnaire_id,
-                               patient_id=patient_id,
+                               patient_id=patient.id,
                                question_id=cleanform.question.id,
                                choice_id=cleanform.id,
                                examination=exam,
                                )
                 bup.save()
-
-            return HttpResponse("Great!")
+            messages.success(request, "Formulár zaregistrovaný.")
+            return HttpResponseRedirect(reverse('index'))
 
         else:
             print(formset.errors)
@@ -78,7 +79,10 @@ def get_report(request):
 
 
 def index(request):
-    return render(request, 'Questionnaires/index.html', {})
+    if request.user.is_authenticated:
+        return render(request, 'Questionnaires/index.html', {})
+    else:
+        return render(request, "Questionnaires/login.html")
 
 
 def show_report(request, exam_id):
@@ -101,3 +105,39 @@ def show_report(request, exam_id):
     # result = calc_faq(exam)
     # result = calc_hads(exam)
     return render(request, 'Questionnaires/show_report.html', {'exam': exam, 'result': result})
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse("login"))
+
+
+def login_view(request):
+    print("šuch")
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        print(user)
+
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect(reverse('index'))
+        else:
+            return render(request, "Questionnaires/login.html", {"message": "Nesprávne meno/heslo."})
+    else:
+        return render(request, "Questionnaires/login.html")
+
+
+def add_patient(request):
+    print("Sušina")
+    if request.method == "POST":
+        form = AddPatientForm(request.POST)
+        if form.is_valid():
+            print(request.POST['name'])
+            messages.warning(request, 'Pacient pridaný.')
+            return HttpResponseRedirect(reverse('index'))
+
+    else:
+        form = AddPatientForm()
+        return render(request, "Questionnaires/add_patient.html", {'form': form})
