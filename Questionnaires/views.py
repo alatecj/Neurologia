@@ -54,7 +54,7 @@ def process(request):
                                examination=exam,
                                )
                 bup.save()
-            messages.success(request, "Formulár zaregistrovaný.")
+            messages.success(request, "Dotazník zaregistrovaný.")
             return HttpResponseRedirect(reverse('index'))
 
         else:
@@ -142,3 +142,17 @@ def add_patient(request):
     else:
         form = AddPatientForm()
         return render(request, "Questionnaires/add_patient.html", {'form': form})
+
+
+def show_patient(request):
+    if request.method == 'POST':
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            exam = Examination.objects.filter(patient=form.cleaned_data['patient'])
+            return render(request, 'Questionnaires/get_report.html', {'form': form,
+                                                                      'exam': exam})
+    else:
+        form = ReportForm()
+    return render(request, 'Questionnaires/get_report.html', {
+        'form': form
+    })

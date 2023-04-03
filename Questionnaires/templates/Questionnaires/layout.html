@@ -13,93 +13,90 @@
     }</style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'index' %}"><i class="fa-solid fa-staff-snake"></i></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'index' %}"><i class="fa-solid fa-staff-snake"></i></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'index' %}">Domov <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        Pacient
-                    </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{% url 'add_patient' %}">Pridať pacienta</a>
-                        <a class="dropdown-item" href="#">Karta pacienta</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        Reporty
-                    </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{% url 'get_report' %}">Reporty</a>
-                    </div>
-                </li>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'index' %}">Domov <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Pacienti
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'add_patient' %}">Pridať pacienta</a>
+                            <a class="dropdown-item" href="{% url 'show_patient' %}">Karta pacienta</a>
+                        </div>
+                    </li>
+{#                    <li class="nav-item dropdown">#}
+{#                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"#}
+{#                           aria-expanded="false">#}
+{#                            Reporty#}
+{#                        </a>#}
+{#                        <div class="dropdown-menu">#}
+{#                            <a class="dropdown-item" href="{% url 'get_report' %}">Reporty</a>#}
+{#                        </div>#}
+{#                    </li>#}
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        Dotazníky
-                    </a>
-                    <div class="dropdown-menu">
-                        {% for qre in qres %}
-                            <a class="dropdown-item" href="/q/{{ qre.id }}">{{ qre.name }}</a>
-                        {% endfor %}
-                    </div>
-                </li>
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                {#            <li class="navbar-text">Prihlásený ako: {{ user }}</li>#}
-                <li class="nav-item">
-                    {% if user.is_authenticated %}
-                        <a class="nav-link" href="{% url 'logout' %}">Odhlásiť sa</a>
-                    {% else %}
-                        <a class="nav-link" href="{% url 'login' %}">Prihlásiť sa</a>
-                    {% endif %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Dotazníky
+                        </a>
+                        <div class="dropdown-menu">
+                            {% for qre in qres %}
+                                <a class="dropdown-item" href="/q/{{ qre.id }}">{{ qre.name }}</a>
+                            {% endfor %}
+                        </div>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+{#                    <li class="navbar-text">Prihlásený ako: {{ user }}</li>#}
+                    <li class="nav-item">
+                        {% if user.is_authenticated %}
+                            <a class="nav-link" href="{% url 'logout' %}">Odhlásiť sa</a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'login' %}">Prihlásiť sa</a>
+                        {% endif %}
 
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-<div class="container-fluid">
-    <div class="my-4 mx-1">
-        {% for message in messages %}
-            <div class="container-fluid p-0">
-                <div class="alert {{ message.tags }} alert-dismissible" role="alert">
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="True">&times;</span>
-                    </button>
-                    {{ message }}
-                </div>
+                    </li>
+                </ul>
             </div>
-        {% endfor %}
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="my-4 mx-1">
+            {% for message in messages %}
+                <div class="container-fluid p-0">
+                    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="True">&times;</span>
+                        </button>
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+        {% block body %}
+        {% endblock %}
 
     </div>
-    {% block body %}
-    {% endblock %}
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab atque beatae debitis dolore doloribus dolorum eius
-        fuga laborum, libero non perspiciatis, quidem quo reprehenderit soluta tempore vel voluptas. Aut, optio?</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet architecto deleniti deserunt dignissimos dolore
-        earum eum ex exercitationem inventore labore laudantium, placeat quibusdam rerum saepe sapiente? Accusamus
-        asperiores, corporis cumque doloremque exercitationem id itaque iusto sapiente ullam voluptatibus. Ducimus enim
-        expedita fugiat iusto maiores nobis pariatur quo reprehenderit sunt velit.</p>
+
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
-
-
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
 </body>
 </html>

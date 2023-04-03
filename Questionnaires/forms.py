@@ -75,7 +75,6 @@ class ReportForm(forms.Form):
         self.fields['patient'].queryset = Patient.objects.all()
         self.helper = FormHelper()
         self.helper.form_id = 'reportform'
-        # self.helper.form_class = 'blueForms'
         self.helper.form_method = 'post'
         self.helper.form_action = 'get_report'
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', 'Zobraziť'))
