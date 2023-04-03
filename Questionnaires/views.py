@@ -130,11 +130,12 @@ def login_view(request):
 
 
 def add_patient(request):
-    print("Sušina")
     if request.method == "POST":
         form = AddPatientForm(request.POST)
         if form.is_valid():
-            print(request.POST['name'])
+            print(form.cleaned_data)
+            new_patient = Patient(name=form.cleaned_data['name'], identifier=form.cleaned_data['identifier'])
+            new_patient.save()
             messages.warning(request, 'Pacient pridaný.')
             return HttpResponseRedirect(reverse('index'))
 

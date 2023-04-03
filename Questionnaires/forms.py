@@ -45,7 +45,6 @@ class AddPatientForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-        print("šubidubi")
 
     class Meta:
         model = Patient
