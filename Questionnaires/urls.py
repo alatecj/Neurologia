@@ -11,4 +11,5 @@ urlpatterns = [
     path('q/<int:questionnaire_id>', views.display_questionnaire, name='display_questionnaire'),
     path('reporty', views.get_report, name='get_report'),
     path('show_report/<int:exam_id>', views.show_report, name='show_report'),
+    path('stroop', views.stroop_test, name='stroop_test'),
 ]

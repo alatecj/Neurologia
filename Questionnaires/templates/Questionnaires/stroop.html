@@ -1,0 +1,46 @@
+{% extends "Questionnaires/layout.html" %}
+{% block scripts %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'stroop.css' %}">
+    <script src="{% static 'stroop.js' %}"></script>
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+
+{% block body %}
+
+    <div class="container mt-5">
+
+        <div class="text-center h3 bg-light">
+            <div class="row my-1 py-2 font-weight-bold">
+                <div class="col farba"></div>
+                <div class="col farba"></div>
+                <div class="col farba"></div>
+            </div>
+            <div class="row my-1 py-2">
+                <div class="col farba"></div>
+                <div class="col farba"></div>
+                <div class="col farba"></div>
+            </div>
+            <div class="row my-1 py-2">
+                <div class="col farba"></div>
+                <div class="col farba"></div>
+                <div class="col farba"></div>
+            </div>
+            <div class="row my-1 py-2">
+                <div class="col farba"></div>
+                <div class="col farba"></div>
+                <div class="col farba"></div>
+            </div>
+
+        </div>
+        <div class="row justify-content-md-center my-1 py-2">
+            <div class="col-2">
+                <button class="btn btn-primary" onclick="myFunction2()">Nový test!</button>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

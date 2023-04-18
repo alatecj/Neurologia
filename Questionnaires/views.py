@@ -156,3 +156,7 @@ def show_patient(request):
     return render(request, 'Questionnaires/get_report.html', {
         'form': form
     })
+
+
+def stroop_test(request):
+    return render(request, 'Questionnaires/stroop.html')
