@@ -160,3 +160,7 @@ def show_patient(request):
 
 def stroop_test(request):
     return render(request, 'Questionnaires/stroop.html')
+
+
+def stroop_game(request):
+    return render(request, 'Questionnaires/stroop_game.html')
