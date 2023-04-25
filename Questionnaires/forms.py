@@ -1,8 +1,9 @@
 from crispy_forms.bootstrap import InlineRadios
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, HTML, Fieldset
+from crispy_forms.layout import Submit, Layout
 from django import forms
 from django.forms import BaseFormSet
+from django_select2 import forms as s2forms
 from .models import Choice, Question, Patient
 
 
@@ -36,8 +37,27 @@ class BaseChoiceFormSet(BaseFormSet):
         return {'question_id': q}
 
 
+class NameWidget(s2forms.ModelSelect2Widget):
+    search_fields = ["name__icontains", ]
+    queryset = Patient.objects.all()
+
+
+# class PatientForm(forms.ModelForm):
+#     class Meta:
+#         model = Patient
+#         fields = ("name",)
+#         widgets = {
+#             "name": NameWidget,
+#         }
 class PatientForm(forms.Form):
-    id = forms.IntegerField(required=True, label="ID pacienta")
+    my_choice = forms.ChoiceField(widget=NameWidget, choices=[('', 'Vyberte pacienta:')])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Zobraziť'))
+        self.helper.form_method = 'post'
+        self.helper.form_show_labels = False
 
 
 class AddPatientForm(forms.ModelForm):

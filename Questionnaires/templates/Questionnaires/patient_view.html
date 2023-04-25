@@ -1,0 +1,14 @@
+{% extends "Questionnaires/layout.html" %}
+{% load crispy_forms_tags %}
+{% block scripts %}
+    {% load static %}
+    {{ form.media.css }}
+
+
+{% endblock %}
+{% block body %}
+
+    {% crispy form %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    {{ form.media.js }}
+{% endblock %}

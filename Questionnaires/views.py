@@ -164,3 +164,8 @@ def stroop_test(request):
 
 def stroop_game(request):
     return render(request, 'Questionnaires/stroop_game.html')
+
+
+def patientview(request):
+    form = PatientForm()
+    return render(request, 'Questionnaires/patient_view.html', {'form': form})

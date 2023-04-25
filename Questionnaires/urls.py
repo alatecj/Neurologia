@@ -13,4 +13,5 @@ urlpatterns = [
     path('show_report/<int:exam_id>', views.show_report, name='show_report'),
     path('stroop', views.stroop_test, name='stroop_test'),
     path('stroop_game', views.stroop_game, name='stroop_game'),
+    path('patient_view', views.patientview, name='patient_view'),
 ]
