@@ -1,9 +1,13 @@
 {% extends "Questionnaires/layout.html" %}
 {% load crispy_forms_tags %}
-
+{% block scripts %}
+    {% load static %}
+    {{ form.media.css }}
+{% endblock %}
 {% block body %}
     {% crispy form %}
-
+    {{ form.errors }}
+    {{ form.non_field_errors }}
     {% for ex in exam %}
         {% for resp in ex.exam_responses.all %}
             {% if forloop.first %}
@@ -12,4 +16,6 @@
             {% endif %}
         {% endfor %}
     {% endfor %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {{ form.media.js }}
 {% endblock %}

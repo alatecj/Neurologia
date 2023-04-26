@@ -66,16 +66,23 @@ def process(request):
 
 def get_report(request):
     if request.method == 'POST':
-        form = ReportForm(request.POST)
+        print(request.POST)
+        print("zip")
+        form = PatientForm(request.POST)
+        print(form)
         if form.is_valid():
+            print("zap")
             exam = Examination.objects.filter(patient=form.cleaned_data['patient'])
             return render(request, 'Questionnaires/get_report.html', {'form': form,
                                                                       'exam': exam})
     else:
-        form = ReportForm()
+        print("zup")
+        form = PatientForm()
     return render(request, 'Questionnaires/get_report.html', {
         'form': form
     })
+
+
 
 
 def index(request):
@@ -144,18 +151,7 @@ def add_patient(request):
         return render(request, "Questionnaires/add_patient.html", {'form': form})
 
 
-def show_patient(request):
-    if request.method == 'POST':
-        form = ReportForm(request.POST)
-        if form.is_valid():
-            exam = Examination.objects.filter(patient=form.cleaned_data['patient'])
-            return render(request, 'Questionnaires/get_report.html', {'form': form,
-                                                                      'exam': exam})
-    else:
-        form = ReportForm()
-    return render(request, 'Questionnaires/get_report.html', {
-        'form': form
-    })
+
 
 
 def stroop_test(request):

@@ -42,15 +42,8 @@ class NameWidget(s2forms.ModelSelect2Widget):
     queryset = Patient.objects.all()
 
 
-# class PatientForm(forms.ModelForm):
-#     class Meta:
-#         model = Patient
-#         fields = ("name",)
-#         widgets = {
-#             "name": NameWidget,
-#         }
 class PatientForm(forms.Form):
-    my_choice = forms.ChoiceField(
+    patient = forms.ChoiceField(
         widget=NameWidget(attrs={'data-placeholder': "Vyberte pacienta", 'minimumResultsForSearch': 'Infinity'}))
 
     def __init__(self, *args, **kwargs):
@@ -59,6 +52,8 @@ class PatientForm(forms.Form):
         self.helper.add_input(Submit('submit', 'Zobraziť'))
         self.helper.form_method = 'post'
         self.helper.form_show_labels = False
+        self.helper.form_action = 'get_report'
+
 
 
 class AddPatientForm(forms.ModelForm):
