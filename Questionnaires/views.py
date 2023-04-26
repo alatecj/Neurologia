@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.contrib import messages
 from .calculations import *
 from django.contrib.auth import logout, authenticate, login
+import datetime
 
 
 # Create your views here.
@@ -66,10 +67,7 @@ def process(request):
 
 def get_report(request):
     if request.method == 'POST':
-        print(request.POST)
-        print("zip")
         form = PatientForm(request.POST)
-        print(form)
         if form.is_valid():
             print("zap")
             exam = Examination.objects.filter(patient=form.cleaned_data['patient'])
@@ -83,11 +81,12 @@ def get_report(request):
     })
 
 
-
-
 def index(request):
     if request.user.is_authenticated:
-        return render(request, 'Questionnaires/index.html', {})
+        now = datetime.datetime.now()
+        last_10_exams = Examination.objects.order_by('-id')[:10]
+        context = {'current_time': now, 'exam': last_10_exams}
+        return render(request, 'Questionnaires/index.html', context)
     else:
         return render(request, "Questionnaires/login.html")
 
@@ -149,9 +148,6 @@ def add_patient(request):
     else:
         form = AddPatientForm()
         return render(request, "Questionnaires/add_patient.html", {'form': form})
-
-
-
 
 
 def stroop_test(request):

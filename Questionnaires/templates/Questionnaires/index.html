@@ -1,6 +1,22 @@
 {% extends "Questionnaires/layout.html" %}
 {% block body %}
-    <h1>Vitajte na stranke dotaznikov pre neurologiu!</h1>
+    {% if current_time.hour < 9 %}
+        <h3>Dobré ráno, {{ request.user }}, vitajte na stranke dotazníkov pre neurológiu!</h3>
+    {% elif current_time.hour < 18 %}
+        <h3>Dobrý deň, {{ request.user }}, vitajte na stranke dotazníkov pre neurológiu!</h3>
+    {% else %}
+        <h3>Dobrý večer, {{ request.user }}, vitajte na stranke dotazníkov pre neurológiu!</h3>
+    {% endif %}
+    <br/>
+    <h4>Posledné vyšetrenia:</h4>
+    {% for ex in exam %}
+            {% for resp in ex.exam_responses.all %}
+                {% if forloop.first %}
+                    <a href="{% url 'show_report' ex.id %}">Vyšetrenie pacienta {{ ex.patient }} zo dňa {{ ex.created_at.date }} -
+                        dotazník {{ resp.questionnaire }}</a><br>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
     {{ message }}
 
 {% endblock %}
