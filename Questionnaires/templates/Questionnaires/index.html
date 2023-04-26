@@ -1,11 +1,11 @@
 {% extends "Questionnaires/layout.html" %}
 {% block body %}
     {% if current_time.hour < 9 %}
-        <h3>Dobré ráno, {{ request.user }}, vitajte na stranke dotazníkov pre neurológiu!</h3>
+        <h3>Dobré ráno, {{ request.user.first_name }}, vitajte na stranke dotazníkov pre neurológiu!</h3>
     {% elif current_time.hour < 18 %}
-        <h3>Dobrý deň, {{ request.user }}, vitajte na stranke dotazníkov pre neurológiu!</h3>
+        <h3>Dobrý deň, {{ request.user.first_name }}, vitajte na stranke dotazníkov pre neurológiu!</h3>
     {% else %}
-        <h3>Dobrý večer, {{ request.user }}, vitajte na stranke dotazníkov pre neurológiu!</h3>
+        <h3>Dobrý večer, {{ request.user.first_name }}, vitajte na stranke dotazníkov pre neurológiu!</h3>
     {% endif %}
     <br/>
     <h4>Posledné vyšetrenia:</h4>
