@@ -50,7 +50,8 @@ class NameWidget(s2forms.ModelSelect2Widget):
 #             "name": NameWidget,
 #         }
 class PatientForm(forms.Form):
-    my_choice = forms.ChoiceField(widget=NameWidget, choices=[('', 'Vyberte pacienta:')])
+    my_choice = forms.ChoiceField(
+        widget=NameWidget(attrs={'data-placeholder': "Vyberte pacienta", 'minimumResultsForSearch': 'Infinity'}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
