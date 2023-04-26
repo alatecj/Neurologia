@@ -13,14 +13,14 @@ from django.contrib.auth import logout, authenticate, login
 
 
 def display_questionnaire(request, questionnaire_id):
-    patientform = ReportForm()
+    form = PatientForm()
     qre_id = Questionnaire.objects.get(pk=questionnaire_id)
     qs = Question.objects.filter(questionnaire=qre_id).values_list('id', flat=True)
     qaformset = formset_factory(ChoiceForm, formset=BaseChoiceFormSet, extra=len(qs))
     formset = qaformset(form_kwargs={'questions': qs})
     helper = ChoiceFormSetHelper()
     return render(request, 'Questionnaires/display_qre.html',
-                  {'formset': formset, 'helper': helper, 'qre': qre_id, 'patientform': patientform})
+                  {'formset': formset, 'helper': helper, 'qre': qre_id, 'form': form})
 
 
 def process(request):

@@ -5,17 +5,18 @@
     {{ form.media.css }}
 {% endblock %}
 {% block body %}
-    {% crispy form %}
-    {{ form.errors }}
-    {{ form.non_field_errors }}
-    {% for ex in exam %}
-        {% for resp in ex.exam_responses.all %}
-            {% if forloop.first %}
-                <a href="{% url 'show_report' ex.id %}">Vyšetrenie zo dňa {{ ex.created_at.date }} -
-                    dotazník {{ resp.questionnaire }}</a><br>
-            {% endif %}
+    <form action="{% url 'get_report' %}" method="post">
+        {% crispy form %}
+        <input type="submit" value="Zobraziť" class="btn btn-primary" id="submit-id-submit">
+    </form>
+        {% for ex in exam %}
+            {% for resp in ex.exam_responses.all %}
+                {% if forloop.first %}
+                    <a href="{% url 'show_report' ex.id %}">Vyšetrenie zo dňa {{ ex.created_at.date }} -
+                        dotazník {{ resp.questionnaire }}</a><br>
+                {% endif %}
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    {{ form.media.js }}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        {{ form.media.js }}
 {% endblock %}

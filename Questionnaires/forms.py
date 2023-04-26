@@ -49,10 +49,11 @@ class PatientForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Zobraziť'))
-        self.helper.form_method = 'post'
+        # self.helper.add_input(Submit('submit', 'Zobraziť'))
+        # self.helper.form_method = 'post'
         self.helper.form_show_labels = False
-        self.helper.form_action = 'get_report'
+        self.helper.form_tag = False
+        # self.helper.form_action = 'get_report'
 
 
 class AddPatientForm(forms.ModelForm):
