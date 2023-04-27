@@ -4,7 +4,7 @@ from crispy_forms.layout import Submit, Layout
 from django import forms
 from django.forms import BaseFormSet
 from django_select2 import forms as s2forms
-from .models import Choice, Question, Patient
+from .models import Choice, Question, Patient, Questionnaire
 
 
 class ChoiceForm(forms.Form):
@@ -37,14 +37,35 @@ class BaseChoiceFormSet(BaseFormSet):
         return {'question_id': q}
 
 
-class NameWidget(s2forms.ModelSelect2Widget):
-    search_fields = ["name__icontains", ]
+class NameWidget(s2forms.Select2Widget):
+    search_fields = ["first_name__icontains", "last_name__icontains", ]
     queryset = Patient.objects.all()
 
 
 class PatientForm(forms.Form):
     patient = forms.ModelChoiceField(queryset=Patient.objects.all(),
+                                     widget=NameWidget(attrs={'data-placeholder': "Vyberte pacienta", }))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        # self.helper.add_input(Submit('submit', 'Zobraziť'))
+        # self.helper.form_method = 'post'
+        self.helper.form_show_labels = False
+        self.helper.form_tag = False
+        # self.helper.form_action = 'get_report'
+
+
+class ExamLookupForm(forms.Form):
+    patient = forms.ModelChoiceField(queryset=Patient.objects.all(),
                                      widget=NameWidget(attrs={'data-placeholder': "Vyberte pacienta"}))
+    exam_date_start = forms.DateField(required=False, label='Dátum vyšetrenia (do)',
+                                      widget=forms.DateInput(attrs={'type': 'date', 'placeholder': "Dátum do"},
+                                                             format='%d.%m.%Y'))
+    exam_date_end = forms.DateField(required=False, label='Dátum vyšetrenia (do)',
+                                    widget=forms.DateInput(attrs={'type': 'date', 'placeholder': "Dátum do"},
+                                                           format='%d.%m.%Y'))
+    questionnaire_type = forms.ModelChoiceField(required=False, queryset=Questionnaire.objects.all())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -64,7 +85,7 @@ class AddPatientForm(forms.ModelForm):
 
     class Meta:
         model = Patient
-        fields = ['name', 'identifier']
+        fields = ['first_name', 'identifier']
 
 
 class ChoiceFormSetHelper(FormHelper):

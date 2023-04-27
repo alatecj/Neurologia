@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
 from .models import Question, Questionnaire, Response, Patient, Examination
 from django.forms import formset_factory
-from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper, ReportForm, AddPatientForm
+from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper, ReportForm, AddPatientForm, ExamLookupForm
 from django.urls import reverse
 from django.contrib import messages
 from .calculations import *
@@ -67,7 +67,8 @@ def process(request):
 
 def get_report(request):
     if request.method == 'POST':
-        form = PatientForm(request.POST)
+        form = ExamLookupForm(request.POST)
+        print(request.POST)
         if form.is_valid():
             print("zap")
             exam = Examination.objects.filter(patient=form.cleaned_data['patient'])
@@ -75,7 +76,7 @@ def get_report(request):
                                                                       'exam': exam})
     else:
         print("zup")
-        form = PatientForm()
+        form = ExamLookupForm()
     return render(request, 'Questionnaires/get_report.html', {
         'form': form
     })
@@ -140,7 +141,7 @@ def add_patient(request):
         form = AddPatientForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)
-            new_patient = Patient(name=form.cleaned_data['name'], identifier=form.cleaned_data['identifier'])
+            new_patient = Patient(name=form.cleaned_data['first_name'], identifier=form.cleaned_data['identifier'])
             new_patient.save()
             messages.warning(request, 'Pacient pridaný.')
             return HttpResponseRedirect(reverse('index'))
