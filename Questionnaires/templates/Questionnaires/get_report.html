@@ -1,4 +1,5 @@
 {% extends "Questionnaires/layout.html" %}
+{% load crispy_forms_filters %}
 {% load crispy_forms_tags %}
 {% block scripts %}
     {% load static %}
@@ -8,8 +9,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 {% endblock %}
 {% block body %}
-    <form action="{% url 'get_report' %}" method="post">
+    <form action="{% url 'get_report' %}" method="post" class="container">
         {% crispy form %}
+
         <input type="submit" value="Zobraziť" class="btn btn-primary" id="submit-id-submit">
     </form>
 
@@ -17,6 +19,7 @@
     {% for ex in exam %}
         {% if forloop.first %}
             <table class="table">
+            <thead>
             <tr class="table-dark">
                 <th class="rounded-start">Meno</th>
                 <th>Rok narodenia</th>
@@ -24,6 +27,7 @@
                 <th>Test</th>
                 <th class="rounded-end"></th>
             </tr>
+            </thead>
 
         {% endif %}
     {% for resp in ex.exam_responses.all %}
@@ -35,8 +39,6 @@
                 <td>{{ resp.questionnaire }}</td>
                 <td><a href="{% url 'show_report' ex.id %}"><i class="fa-solid fa-arrow-right-long"></i></a></td>
             </tr>
-            {#                <a href="{% url 'show_report' ex.id %}">Vyšetrenie zo dňa {{ ex.created_at.date }} -#}
-            {#                    dotazník {{ resp.questionnaire }}</a><br>#}
         {% endif %}
     {% endfor %}
     {% if forloop.last %}

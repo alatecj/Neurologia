@@ -8,10 +8,11 @@
         <h3>Dobrý večer, {{ request.user.first_name }}, vitajte na stranke dotazníkov pre neurológiu!</h3>
     {% endif %}
     <br/>
-    <h4>Posledné vyšetrenia:</h4>
-    {% for ex in exam %}
+        {% for ex in exam %}
         {% if forloop.first %}
             <table class="table">
+
+            <thead>
             <tr class="table-dark">
                 <th class="rounded-start">Meno</th>
                 <th>Rok narodenia</th>
@@ -19,6 +20,7 @@
                 <th>Test</th>
                 <th class="rounded-end"></th>
             </tr>
+            </thead>
 
         {% endif %}
     {% for resp in ex.exam_responses.all %}

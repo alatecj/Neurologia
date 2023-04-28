@@ -2,7 +2,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
 from .models import Question, Questionnaire, Response, Patient, Examination
 from django.forms import formset_factory
-from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper, ReportForm, AddPatientForm, ExamLookupForm
+from .forms import ChoiceForm, BaseChoiceFormSet, PatientForm, ChoiceFormSetHelper, ReportForm, AddPatientForm, \
+    ExamLookupForm
 from django.urls import reverse
 from django.contrib import messages
 from .calculations import *
@@ -141,7 +142,8 @@ def add_patient(request):
         form = AddPatientForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)
-            new_patient = Patient(name=form.cleaned_data['first_name'], identifier=form.cleaned_data['identifier'])
+            new_patient = Patient(first_name=form.cleaned_data['first_name'], last_name=form.cleaned_data['last_name'],
+                                  identifier=form.cleaned_data['identifier'])
             new_patient.save()
             messages.warning(request, 'Pacient pridaný.')
             return HttpResponseRedirect(reverse('index'))

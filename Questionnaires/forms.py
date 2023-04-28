@@ -1,6 +1,6 @@
 from crispy_forms.bootstrap import InlineRadios
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout
+from crispy_forms.layout import Submit, Layout, Fieldset, HTML, MultiField, Div, Field
 from django import forms
 from django.forms import BaseFormSet
 from django_select2 import forms as s2forms
@@ -59,13 +59,15 @@ class PatientForm(forms.Form):
 class ExamLookupForm(forms.Form):
     patient = forms.ModelChoiceField(queryset=Patient.objects.all(),
                                      widget=NameWidget(attrs={'data-placeholder': "Vyberte pacienta"}))
-    exam_date_start = forms.DateField(required=False, label='Dátum vyšetrenia (do)',
-                                      widget=forms.DateInput(attrs={'type': 'date', 'placeholder': "Dátum do"},
-                                                             format='%d.%m.%Y'))
-    exam_date_end = forms.DateField(required=False, label='Dátum vyšetrenia (do)',
-                                    widget=forms.DateInput(attrs={'type': 'date', 'placeholder': "Dátum do"},
-                                                           format='%d.%m.%Y'))
-    questionnaire_type = forms.ModelChoiceField(required=False, queryset=Questionnaire.objects.all())
+    exam_date_start = forms.DateField(required=False,
+                                      widget=forms.DateInput(attrs={'type': 'date', 'placeholder': "Od"},
+                                                             ))
+    exam_date_end = forms.DateField(required=False,
+                                    widget=forms.DateInput(attrs={'type': 'date', 'placeholder': "Do"},
+                                                           ))
+    questionnaire_type = forms.ModelChoiceField(required=False,
+                                                queryset=Questionnaire.objects.all(),
+                                                empty_label="Vyberte dotaznik")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -75,6 +77,34 @@ class ExamLookupForm(forms.Form):
         self.helper.form_show_labels = False
         self.helper.form_tag = False
         # self.helper.form_action = 'get_report'
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    Field('patient'),
+                    css_class='col-sm-6 col-lg'
+                ),
+                css_class='row'
+            ),
+            Div(
+                Div(
+                    Field('exam_date_start'),
+                    css_class='col-sm-6'
+                ),
+                Div(
+                    Field('exam_date_end'),
+                    css_class='col-sm-6'
+                ),
+                css_class='row'
+            ),
+            Div(
+                Div(
+                    Field('questionnaire_type'),
+                    css_class='col'
+                ),
+                css_class='row'
+            ),
+
+        )
 
 
 class AddPatientForm(forms.ModelForm):
@@ -82,10 +112,16 @@ class AddPatientForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
+        self.helper.form_show_labels = False
 
     class Meta:
         model = Patient
-        fields = ['first_name', 'identifier']
+        fields = ['first_name', 'last_name', 'identifier']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'placeholder': "Krstné meno"}),
+            'last_name': forms.TextInput(attrs={'placeholder': "Priezvisko"}),
+            'identifier': forms.TextInput(attrs={'placeholder': "Rok narodenia"}),
+        }
 
 
 class ChoiceFormSetHelper(FormHelper):
