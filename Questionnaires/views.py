@@ -15,20 +15,31 @@ import datetime
 
 
 def display_questionnaire(request, questionnaire_id):
+    # inicializuje sa formulár s JS Select2 funkcionalitou na vyhladavanie pacienta v realnom case
     form = PatientForm()
+    # z databazy sa vytiahnu informacie o formulari podla cisla dotaznika z get requestu
     qre_id = Questionnaire.objects.get(pk=questionnaire_id)
+    # z databazy sa vytiahnu vsetky otazky prisluchajuce k danemu dotazniku
     qs = Question.objects.filter(questionnaire=qre_id).values_list('id', flat=True)
+    # vytvori sa formset - postavi sa z viacerych instancii formularov ChoiceForm
     qaformset = formset_factory(ChoiceForm, formset=BaseChoiceFormSet, extra=len(qs))
+    # formset sa nainicializuje a odovzdaju sa mu vsetky otazky prisluchajuce k vybranemu dotazniku
     formset = qaformset(form_kwargs={'questions': qs})
+    # nainicializuje sa tzv. FormSetHelper - cez ktory je mozne menit sposob generovania FormSetu
     helper = ChoiceFormSetHelper()
+    # zavola sa render funkcia a html sablone sa odovzda formset aj s helperom, cislo dotaznika a formular s
+    # vyhladavanim zakaznika
     return render(request, 'Questionnaires/display_qre.html',
                   {'formset': formset, 'helper': helper, 'qre': qre_id, 'form': form})
 
 
 def process(request):
+    # ak bol formular sprocesovany
     if request.method == 'POST':
+        # vytvor instanciu formulara pre vyhladavanie pacienta a overme si, ci dany pacient existuje
         form = ReportForm(request.POST)
         if form.is_valid():
+            # ak existuje, ulozime objekt pacienta na neskorsie pouzitie
             patient = form.cleaned_data['patient']
             if not Patient.objects.filter(id=patient.id):
                 # vytvor django message, ze cislo pacienta je zle!
@@ -38,15 +49,21 @@ def process(request):
         else:
             print(form.errors)
             return HttpResponseRedirect(reverse("index"))
+        # ziskame z POST requestu cislo dotaznika
         qre_id = request.POST['qre_id']
+        # znovu vyhladame data pre formular, otazky a odpovede a naplnime ho datami z POST, aby sme si overili,
+        # ci neobsahuju nieco neocakavane
         qs = Question.objects.filter(questionnaire=qre_id).values_list('id', flat=True)
         qaformset = formset_factory(ChoiceForm, formset=BaseChoiceFormSet, extra=len(qs))
         formset = qaformset(request.POST, form_kwargs={'questions': qs})
-
+        # ak su vsetky formulare daneho formsetu v poriadku, vytvorime objekt Exam (vysetrenie) a zapiseme ho do
+        # databazy
         if formset.is_valid():
             exam = Examination(patient_id=patient.id)
             exam.save()
-
+            # pre kazdy formular v sete formularov vytorime objekt pacientovej odpovede, ktora je vystavana z
+            # kombinacie formulara, pacienta, otazky, vybranej odpovede a vysetrenia a zapiseme pacientovu odpoved do
+            # databazy
             for form in formset:
                 cleanform = form.cleaned_data['answer']
                 bup = Response(questionnaire_id=cleanform.question.questionnaire_id,
@@ -63,7 +80,7 @@ def process(request):
             print(formset.errors)
 
     else:
-        return HttpResponse("POOP")
+        return HttpResponse("Fail")
 
 
 def get_report(request):
@@ -71,7 +88,6 @@ def get_report(request):
         form = ExamLookupForm(request.POST)
         print(request.POST)
         if form.is_valid():
-            print("zap")
             exam = Examination.objects.filter(patient=form.cleaned_data['patient'])
             return render(request, 'Questionnaires/get_report.html', {'form': form,
                                                                       'exam': exam})
@@ -96,7 +112,6 @@ def index(request):
 def show_report(request, exam_id):
     exam = Examination.objects.get(pk=exam_id)
     qre_id = exam.exam_responses.all().first().questionnaire_id
-    # TODO tie hardcoded values pre id questionnairov by mohli byt nejake dynamickejsie... (vyhodnocovanie cez json?)
     match qre_id:
         case 1:
             result = calc_faq(exam)

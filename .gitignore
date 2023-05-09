@@ -140,3 +140,4 @@ dmypy.json
 cython_debug/
 
 !/Neurologia/settings.py
+/Neurologia/settings.py

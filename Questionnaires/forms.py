@@ -1,36 +1,45 @@
 from crispy_forms.bootstrap import InlineRadios
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Fieldset, HTML, MultiField, Div, Field
+from crispy_forms.layout import Submit, Layout, Div, Field
 from django import forms
 from django.forms import BaseFormSet
 from django_select2 import forms as s2forms
 from .models import Choice, Question, Patient, Questionnaire
 
-
+# formular jednej otázky s odpovedami
 class ChoiceForm(forms.Form):
+    # nainicializujeme polia s radio buttonmi
     answer = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Choice.objects.none(), )
 
     def __init__(self, *args, question_id=None, **kwargs, ):
         super().__init__(*args, **kwargs)
+        # cez formset sme formularu odovzdali zoznam otazok, zobrazime kazdu z nich a k nej aj moznosti odpovede
         if question_id is not None:
+            # vyhladame vsetky moznosti odpovede podla cisla otazky, ktore sme dostali z formsetu
             self.fields['answer'].queryset = Choice.objects.filter(question=question_id)
+            # na zaklade id otazky, ktore sme dostali z formsetu vyhladame k danej otazke vsetky informacie
             q = Question.objects.get(pk=question_id)
+            # nastavime text otazky na text z databazy
             self.fields['answer'].label = q.text
+            # nastavime otazku na required, aby ju zadavatel nemohol preskocit
             self.fields['answer'].required = True
+            # pridame volitelny text oddelujuci jednotlive otazky
             self.section_text = q.section_text
 
             self.helper = FormHelper(self)
             self.helper.form_tag = False
             self.helper.disable_csrf = True
-            # self.helper.layout = Layout(InlineRadios('answer'))
 
-
+# vytvorime standardny formset
 class BaseChoiceFormSet(BaseFormSet):
     def __init__(self, *args, **kwargs):
         super(BaseChoiceFormSet, self).__init__(*args, **kwargs)
         for form in self.forms:
+            # vypneme atribut html pre form tag vo vygenerovanom HTML
             form.use_required_attribute = True
-
+    # pri inicializacii formsetu vo views.py odovzdame formsetu vsetky otazky daneho formulara
+    # tie pomocou nasledovnej funkcionality ulozime do premennej a odovzdame dalej jednotlivym instanciam
+    # form objektov daneho formsetu
     def get_form_kwargs(self, index):
         kwargs = super().get_form_kwargs(index)
         q = kwargs['questions'][index]
@@ -72,11 +81,8 @@ class ExamLookupForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        # self.helper.add_input(Submit('submit', 'Zobraziť'))
-        # self.helper.form_method = 'post'
         self.helper.form_show_labels = False
         self.helper.form_tag = False
-        # self.helper.form_action = 'get_report'
         self.helper.layout = Layout(
             Div(
                 Div(
@@ -123,20 +129,16 @@ class AddPatientForm(forms.ModelForm):
             'identifier': forms.TextInput(attrs={'placeholder': "Rok narodenia"}),
         }
 
-
+# upravime niektore vlastnosti formsetu
 class ChoiceFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # formularu vygenerovanemu formsetom sa nastavi method="post"
         self.form_method = 'post'
-        self.render_required_fields = True
+        # pre jednotlive formulare formsetu schovame <form> tag
         self.form_tag = False
-        # self.layout = Layout(HTML('<strong>{{ form.section_text }}</strong>'),)
-        # self.layout = Layout((HTML('{% if forloop.first %} Only display text on the first iteration... {% endif %}')))
-        # Tu by sme teoreticky vedeli urobit moznosti formulara vodorovne.
+        # zmenime rozlozenie radio buttonov kazdeho formulara
         self.layout = Layout(InlineRadios('answer'))
-        # self.form_class = "form-horizontal"
-        # self.label_class = "col-lg-2"
-        # self.field_class = "col-lg-8"
 
 
 class ReportForm(forms.Form):
